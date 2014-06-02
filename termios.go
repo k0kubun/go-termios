@@ -1,6 +1,4 @@
-//
 // Go bindings for termios(3).
-//
 
 package termios
 
@@ -12,13 +10,10 @@ package termios
 import "C"
 import "errors"
 
-//
 // Special Control Characters
 // Index into Termios.CC[] character array.
-//
-// Name	          Enabled by
-//
 const (
+	// Name            Enabled by
 	VEOF     = iota // ICANON
 	VEOL            // ICANON
 	VEOL2           // ICANON together with IEXTEN
@@ -42,9 +37,7 @@ const (
 	NCCS            // size of c_cc[]
 )
 
-//
 // Input flags - software input processing
-//
 const (
 	IGNBRK  = 0x00000001 // ignore BREAK condition
 	BRKINT  = 0x00000002 // map BREAK to SIGINTR
@@ -62,9 +55,7 @@ const (
 	IUTF8   = 0x00004000 // maintain state for UTF-8 VERASE
 )
 
-//
 // Output flags - software output processing
-//
 const (
 	OPOST  = 0x00000001 // enable following output processing
 	ONLCR  = 0x00000002 // map NL to CR-NL (ala CRMOD)
@@ -103,13 +94,11 @@ const (
 	VT1    = 0x00010000
 )
 
-//
 // "Local" flags - dumping ground for other state
 //
 // Warning: some flags in this structure begin with
 // the letter "I" and look like they belong in the
 // input flag.
-//
 const (
 	ECHOKE     = 0x00000001 // visual erase for line kill
 	ECHOE      = 0x00000002 // visually erase chars
@@ -130,9 +119,7 @@ const (
 	NOFLSH     = 0x80000000 // don't flush after interrupt
 )
 
-//
 // Commands passed to SetAttr() for setting the termios structure.
-//
 const (
 	TCSANOW   = 0    // make change immediate
 	TCSADRAIN = 1    // drain output, then change
@@ -140,9 +127,7 @@ const (
 	TCSASOFT  = 0x10 // flag - don't alter h.w. state
 )
 
-//
 // Standard speeds
-//
 const (
 	B0      = 0
 	B50     = 50
