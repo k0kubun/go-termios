@@ -29,7 +29,7 @@ func main() {
 		panic(err)
 	}
 
-	// Read each key input
+	// Read each key input as soon as possible
 	readKey()
 
 	// Set original terminal parameters
