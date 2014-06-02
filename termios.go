@@ -1,6 +1,7 @@
-/*
- * Go bindings for termios(3).
- */
+//
+// Go bindings for termios(3).
+//
+
 package termios
 
 /*
@@ -11,12 +12,12 @@ package termios
 import "C"
 import "errors"
 
-/*
- * Special Control Characters
- * Index into Termios.CC[] character array.
- *
- * Name	          Enabled by
- */
+//
+// Special Control Characters
+// Index into Termios.CC[] character array.
+//
+// Name	          Enabled by
+//
 const (
 	VEOF     = iota // ICANON
 	VEOL            // ICANON
@@ -41,9 +42,9 @@ const (
 	NCCS            // size of c_cc[]
 )
 
-/*
- * Input flags - software input processing
- */
+//
+// Input flags - software input processing
+//
 const (
 	IGNBRK  = 0x00000001 // ignore BREAK condition
 	BRKINT  = 0x00000002 // map BREAK to SIGINTR
@@ -61,9 +62,9 @@ const (
 	IUTF8   = 0x00004000 // maintain state for UTF-8 VERASE
 )
 
-/*
- * Output flags - software output processing
- */
+//
+// Output flags - software output processing
+//
 const (
 	OPOST  = 0x00000001 // enable following output processing
 	ONLCR  = 0x00000002 // map NL to CR-NL (ala CRMOD)
@@ -102,13 +103,13 @@ const (
 	VT1    = 0x00010000
 )
 
-/*
- * "Local" flags - dumping ground for other state
- *
- * Warning: some flags in this structure begin with
- * the letter "I" and look like they belong in the
- * input flag.
- */
+//
+// "Local" flags - dumping ground for other state
+//
+// Warning: some flags in this structure begin with
+// the letter "I" and look like they belong in the
+// input flag.
+//
 const (
 	ECHOKE     = 0x00000001 // visual erase for line kill
 	ECHOE      = 0x00000002 // visually erase chars
@@ -129,9 +130,9 @@ const (
 	NOFLSH     = 0x80000000 // don't flush after interrupt
 )
 
-/*
- * Commands passed to SetAttr() for setting the termios structure.
- */
+//
+// Commands passed to SetAttr() for setting the termios structure.
+//
 const (
 	TCSANOW   = 0    // make change immediate
 	TCSADRAIN = 1    // drain output, then change
@@ -139,9 +140,9 @@ const (
 	TCSASOFT  = 0x10 // flag - don't alter h.w. state
 )
 
-/*
- * Standard speeds
- */
+//
+// Standard speeds
+//
 const (
 	B0      = 0
 	B50     = 50
@@ -200,10 +201,8 @@ type Termios struct {
 	OSpeed Speed    // output speed
 }
 
-/*
- * Wrapper of tcgetattr(3).
- * The GetAttr() function copies the parameters associated with the terminal.
- */
+// Wrapper of tcgetattr(3).
+// The GetAttr() function copies the parameters associated with the terminal.
 func (t *Termios) GetAttr(fd int) error {
 	var cTerm C.struct_termios
 
@@ -214,10 +213,8 @@ func (t *Termios) GetAttr(fd int) error {
 	return nil
 }
 
-/*
- * Wrapper of tcsetattr(3).
- * The SetAttr() function sets the parameters associated with the terminal.
- */
+// Wrapper of tcsetattr(3).
+// The SetAttr() function sets the parameters associated with the terminal.
 func (t *Termios) SetAttr(fd int, opt int) error {
 	if C.tcsetattr(C.int(fd), C.int(opt), cTermios(t)) == -1 {
 		return errors.New("tcsetattr failure")
