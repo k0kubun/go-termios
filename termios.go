@@ -12,86 +12,83 @@ import "errors"
 
 // Special Control Characters
 // Index into Termios.CC[] character array.
+// c_cc characters
 const (
 	// Name            Enabled by
-	VEOF     = iota // ICANON
-	VEOL            // ICANON
-	VEOL2           // ICANON together with IEXTEN
-	VERASE          // ICANON
-	VWERASE         // ICANON together with IEXTEN
-	VKILL           // ICANON
-	VREPRINT        // ICANON together with IEXTEN
-	_               // spare 1
-	VINTR           // ISIG
-	VQUIT           // ISIG
-	VSUSP           // ISIG
-	VDSUSP          // ISIG together with IEXTEN
-	VSTART          // IXON, IXOFF
-	VSTOP           // IXON, IXOFF
-	VLNEXT          // IEXTEN
-	VDISCARD        // IEXTEN
-	VMIN            // !ICANON
-	VTIME           // !ICANON
-	VSTATUS         // ICANON together with IEXTEN
-	_               // spare 2
-	NCCS            // size of c_cc[]
+	VINTR    =  0   // ISIG
+	VQUIT    =  1   // ISIG
+	VERASE   =  2   // ICANON
+	VKILL    =  3   // ICANON
+	VEOF     =  4   // ICANON
+	VTIME    =  5   // !ICANON
+	VMIN     =  6   // !ICANON
+	VSWTC    =  7
+	VSTART   =  8   // IXON, IXOFF
+	VSTOP    =  9   // IXON, IXOFF
+	VSUSP    = 10   // ISIG
+	VEOL     = 11   // ICANON
+	VREPRINT = 12   // ICANON together with IEXTEN
+	VDISCARD = 13   // IEXTEN
+	VWERASE  = 14   // ICANON together with IEXTEN
+	VLNEXT   = 15   // IEXTEN
+	VEOL2    = 16   // ICANON together with IEXTEN
+	NCCS     = 32   // size of c_cc[]
 )
 
 // Input flags - software input processing
+// c_iflag bits
 const (
-	IGNBRK  = 0x00000001 // ignore BREAK condition
-	BRKINT  = 0x00000002 // map BREAK to SIGINTR
-	IGNPAR  = 0x00000004 // ignore (discard) parity errors
-	PARMRK  = 0x00000008 // mark parity and framing errors
-	INPCK   = 0x00000010 // enable checking of parity errors
-	ISTRIP  = 0x00000020 // strip 8th bit off chars
-	INLCR   = 0x00000040 // map NL into CR
-	IGNCR   = 0x00000080 // ignore CR
-	ICRNL   = 0x00000100 // map CR to NL (ala CRMOD)
-	IXON    = 0x00000200 // enable output flow control
-	IXOFF   = 0x00000400 // enable input flow control
-	IXANY   = 0x00000800 // any char will restart after stop
-	IMAXBEL = 0x00002000 // ring bell on input queue full
-	IUTF8   = 0x00004000 // maintain state for UTF-8 VERASE
+	IGNBRK  = 0000001 // ignore BREAK condition
+	BRKINT  = 0000002 // map BREAK to SIGINTR
+	IGNPAR  = 0000004 // ignore (discard) parity errors
+	PARMRK  = 0000010 // mark parity and framing errors
+	INPCK   = 0000020 // enable checking of parity errors
+	ISTRIP  = 0000040 // strip 8th bit off chars
+	INLCR   = 0000100 // map NL into CR
+	IGNCR   = 0000200 // ignore CR
+	ICRNL   = 0000400 // map CR to NL (ala CRMOD)
+	IUCLC   = 0001000
+	IXON    = 0002000 // enable output flow control
+	IXANY   = 0004000 // any char will restart after stop
+	IXOFF   = 0010000 // enable input flow control
+	IMAXBEL = 0020000 // ring bell on input queue full
+	IUTF8   = 0040000 // maintain state for UTF-8 VERASE
 )
 
 // Output flags - software output processing
+// c_oflag bits
 const (
-	OPOST  = 0x00000001 // enable following output processing
-	ONLCR  = 0x00000002 // map NL to CR-NL (ala CRMOD)
-	OXTABS = 0x00000004 // expand tabs to spaces
-	ONOEOT = 0x00000008 // discard EOT's (^D) on output)
-
-	// unimplemented features
-	OCRNL  = 0x00000010 // map CR to NL on output
-	ONOCR  = 0x00000020 // no CR output at column 0
-	ONLRET = 0x00000040 // NL performs CR function
-	OFILL  = 0x00000080 // use fill characters for delay
-	NLDLY  = 0x00000300 // \n delay
-	TABDLY = 0x00000c04 // horizontal tab delay
-	CRDLY  = 0x00003000 // \r delay
-	FFDLY  = 0x00004000 // form feed delay
-	BSDLY  = 0x00008000 // \b delay
-	VTDLY  = 0x00010000 // vertical tab delay
-	OFDEL  = 0x00020000 // fill is DEL, else NUL
-	NL0    = 0x00000000
-	NL1    = 0x00000100
-	NL2    = 0x00000200
-	NL3    = 0x00000300
-	TAB0   = 0x00000000
-	TAB1   = 0x00000400
-	TAB2   = 0x00000800
-	TAB3   = 0x00000004
-	CR0    = 0x00000000
-	CR1    = 0x00001000
-	CR2    = 0x00002000
-	CR3    = 0x00003000
-	FF0    = 0x00000000
-	FF1    = 0x00004000
-	BS0    = 0x00000000
-	BS1    = 0x00008000
-	VT0    = 0x00000000
-	VT1    = 0x00010000
+	OPOST  = 0000001 // enable following output processing
+	OLCUC  = 0000002
+	ONLCR  = 0000004 // map NL to CR-NL (ala CRMOD)
+	OCRNL  = 0000010 // map CR to NL on output
+	ONOCR  = 0000020 // no CR output at column 0
+	ONLRET = 0000040 // NL performs CR function
+	OFILL  = 0000100 // use fill characters for delay
+	OFDEL  = 0000200 // fill is DEL, else NUL
+	NLDLY  = 0000400 // \n delay
+	NL0    = 0000000
+	NL1    = 0000400
+	CRDLY  = 0003000 // \r delay
+	CR0    = 0000000
+	CR1    = 0001000
+	CR2    = 0002000
+	CR3    = 0003000
+	TABDLY = 0014000 // horizontal tab delay
+	TAB0   = 0000000
+	TAB1   = 0004000
+	TAB2   = 0010000
+	TAB3   = 0014000
+	BSDLY  = 0020000 // \b delay
+	BS0    = 0000000
+	BS1    = 0020000
+	FFDLY  = 0100000 // form feed delay
+	FF0    = 0000000
+	FF1    = 0100000
+	VTDLY  = 0040000 // vertical tab delay
+	VT0    = 0000000
+	VT1    = 0040000
+	XTABS  = 0014000
 )
 
 // "Local" flags - dumping ground for other state
@@ -99,71 +96,100 @@ const (
 // Warning: some flags in this structure begin with
 // the letter "I" and look like they belong in the
 // input flag.
+// c_lflag bits
 const (
-	ECHOKE     = 0x00000001 // visual erase for line kill
-	ECHOE      = 0x00000002 // visually erase chars
-	ECHOK      = 0x00000004 // echo NL after line kill
-	ECHO       = 0x00000008 // enable echoing
-	ECHONL     = 0x00000010 // echo NL even if ECHO is off
-	ECHOPRT    = 0x00000020 // visual erase mode for hardcopy
-	ECHOCTL    = 0x00000040 // echo control chars as ^(Char)
-	ISIG       = 0x00000080 // enable signals INTR, QUIT, [D]SUSP
-	ICANON     = 0x00000100 // canonicalize input lines
-	ALTWERASE  = 0x00000200 // use alternate WERASE algorithm
-	IEXTEN     = 0x00000400 // enable DISCARD and LNEXT
-	EXTPROC    = 0x00000800 // external processing
-	TOSTOP     = 0x00400000 // stop background jobs from output
-	FLUSHO     = 0x00800000 // output being flushed (state)
-	NOKERNINFO = 0x02000000 // no kernel output from VSTATUS
-	PENDIN     = 0x20000000 // XXX retype pending input (state)
-	NOFLSH     = 0x80000000 // don't flush after interrupt
+	ISIG       = 0000001 // enable signals INTR, QUIT, [D]SUSP
+	ICANON     = 0000002 // canonicalize input lines
+	XCASE      = 0000004
+	ECHO       = 0000010 // enable echoing
+	ECHOE      = 0000020 // visually erase chars
+	ECHOK      = 0000040 // echo NL after line kill
+	ECHONL     = 0000100 // echo NL even if ECHO is off
+	NOFLSH     = 0000200 // don't flush after interrupt
+	TOSTOP     = 0000400 // stop background jobs from output
+	ECHOCTL    = 0001000 // echo control chars as ^(Char)
+	ECHOPRT    = 0002000 // visual erase mode for hardcopy
+	ECHOKE     = 0004000 // visual erase for line kill
+	FLUSHO     = 0010000 // output being flushed (state)
+	PENDIN     = 0040000 // XXX retype pending input (state)
+	IEXTEN     = 0100000 // enable DISCARD and LNEXT
+	EXTPROC    = 0200000 // external processing
 )
 
 // Commands passed to SetAttr() for setting the termios structure.
+// tcsetattr use these
+// tcsetattr uses these
 const (
 	TCSANOW   = 0    // make change immediate
 	TCSADRAIN = 1    // drain output, then change
 	TCSAFLUSH = 2    // drain output, flush input
-	TCSASOFT  = 0x10 // flag - don't alter h.w. state
 )
 
 // Standard speeds
+// c_cflag bit
 const (
-	B0      = 0
-	B50     = 50
-	B75     = 75
-	B110    = 110
-	B134    = 134
-	B150    = 150
-	B200    = 200
-	B300    = 300
-	B600    = 600
-	B1200   = 1200
-	B1800   = 1800
-	B2400   = 2400
-	B4800   = 4800
-	B9600   = 9600
-	B19200  = 19200
-	B38400  = 38400
-	B7200   = 7200
-	B14400  = 14400
-	B28800  = 28800
-	B57600  = 57600
-	B76800  = 76800
-	B115200 = 115200
-	B230400 = 230400
-	EXTA    = 19200
-	EXTB    = 38400
+	CBAUD     = 0010017
+	B0        = 0000000 // hang up
+	B50       = 0000001
+	B75       = 0000002
+	B110      = 0000003
+	B134      = 0000004
+	B150      = 0000005
+	B200      = 0000006
+	B300      = 0000007
+	B600      = 0000010
+	B1200     = 0000011
+	B1800     = 0000012
+	B2400     = 0000013
+	B4800     = 0000014
+	B9600     = 0000015
+	B19200    = 0000016
+	B38400    = 0000017
+	EXTA      = 0x0B19200
+	EXTB      = 0x0B38400
+	CSIZE     = 0000060
+	CS5       = 0000000
+	CS6       = 0000020
+	CS7       = 0000040
+	CS8       = 0000060
+	CSTOPB    = 0000100
+	CREAD     = 0000200
+	PARENB    = 0000400
+	PARODD    = 0001000
+	HUPCL     = 0002000
+	CLOCAL    = 0004000
+	CBAUDEX   = 0010000
+	B57600    = 0010001
+	B115200   = 0010002
+	B230400   = 0010003
+	B460800   = 0010004
+	B500000   = 0010005
+	B576000   = 0010006
+	B921600   = 0010007
+	B1000000  = 0010010
+	B1152000  = 0010011
+	B1500000  = 0010012
+	B2000000  = 0010013
+	B2500000  = 0010014
+	B3000000  = 0010015
+	B3500000  = 0010016
+	B4000000  = 0010017
+	_MAX_BAUD = 0xB4000000
+	CIBAUD    = 002003600000 // input baud rate (not used)
+	CMSPAR    = 010000000000   // mark or space (stick) parity
+	CRTSCTS   = 020000000000   // flow control
 )
 
+// tcflow() and TCXONC use these
 const (
-	TCIFLUSH  = 1
-	TCOFLUSH  = 2
-	TCIOFLUSH = 3
-	TCOOFF    = 1
-	TCOON     = 2
-	TCIOFF    = 3
-	TCION     = 4
+	TCOOFF    = 0
+	TCOON     = 1
+	TCIOFF    = 2
+	TCION     = 3
+// tcflush() and TCFLSH use these
+	TCIFLUSH  = 0
+	TCOFLUSH  = 1
+	TCIOFLUSH = 2
 )
 
 var (
